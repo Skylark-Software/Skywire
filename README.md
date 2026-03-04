@@ -345,13 +345,42 @@ GET /source?source_id=tts&name=ThoughtMaker%20TTS
 
 ### ThoughtMaker
 
-Connect ThoughtMaker's TTS module to Skywire for distributed speech output:
+ThoughtMaker's TTS module has built-in Skywire integration for distributed speech output.
 
-```yaml
-# ThoughtMaker audio config
-audio_router:
-  skywire_url: ws://skywire-host:8766/source
-  source_id: thoughtmaker-tts
+**Enable in code:**
+
+```python
+# Configure TTS module for Skywire
+tts_module.set_skywire(
+    enabled=True,
+    url="ws://skywire-host:8766/plugin/tts",
+    targets=["bedroom", "kitchen"]  # Default playback nodes
+)
+
+# Connect
+await tts_module.connect_skywire()
+```
+
+**Per-request targeting:**
+
+```python
+# Speak to specific rooms
+await tts_module._synthesize("Dinner is ready!", {
+    'skywire_targets': ['kitchen', 'living_room']
+})
+```
+
+**Protocol:**
+
+ThoughtMaker connects to `ws://skywire:8766/plugin/tts` and sends:
+
+```json
+{
+  "type": "audio",
+  "data": "<base64-encoded-pcm>",
+  "targets": ["bedroom", "kitchen"],
+  "format": "wav"
+}
 ```
 
 ### Home Assistant
