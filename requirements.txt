@@ -9,6 +9,9 @@ numpy>=1.20.0
 # Web UI
 jinja2>=3.0.0
 
+# System Tray App
+PyQt5>=5.15.0
+
 # Optional: PipeWire integration
 # pip install pulsectl  # For PulseAudio/PipeWire control
 

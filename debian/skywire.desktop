@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Skywire
+Comment=Distributed Audio Node
+Exec=skywire-tray
+Icon=skywire
+Terminal=false
+Type=Application
+Categories=AudioVideo;Audio;
+StartupNotify=false
+X-GNOME-Autostart-enabled=true

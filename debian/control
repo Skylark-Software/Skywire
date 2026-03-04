@@ -1,0 +1,37 @@
+Source: skywire
+Section: sound
+Priority: optional
+Maintainer: Jay Brame <jay@skylarksoftware.com>
+Build-Depends: debhelper-compat (= 13), python3, python3-setuptools, dh-python
+Standards-Version: 4.6.0
+Homepage: https://github.com/Skylark-Software/Skywire
+
+Package: skywire
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+    python3-pyqt5,
+    python3-websockets,
+    python3-numpy,
+    pipewire | pulseaudio
+Recommends: pipewire
+Description: Distributed audio routing system
+ Skywire is a software AV receiver for multi-room audio distribution.
+ It routes audio from sources (TTS, media players) to speaker endpoints
+ across your network.
+ .
+ This package includes:
+  - skywire: Audio routing server
+  - skywire-tray: Desktop system tray application
+  - skywire-node: Headless audio playback client
+
+Package: skywire-server
+Architecture: all
+Depends: ${python3:Depends}, ${misc:Depends},
+    python3-aiohttp,
+    python3-websockets,
+    python3-yaml,
+    python3-numpy,
+    python3-jinja2
+Description: Skywire audio routing server
+ The Skywire server component that handles audio routing between
+ sources and destination nodes. Includes web dashboard.

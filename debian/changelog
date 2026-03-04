@@ -1,0 +1,9 @@
+skywire (0.1.0-1) unstable; urgency=medium
+
+  * Initial release
+  * WebSocket server for audio routing
+  * System tray application for nodes
+  * TTS and STT bridge plugins
+  * Web dashboard
+
+ -- Jay Brame <jay@skylarksoftware.com>  Tue, 04 Mar 2026 02:00:00 -0600

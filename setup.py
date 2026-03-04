@@ -21,12 +21,22 @@ setup(
             "pytest>=7.0.0",
             "pytest-asyncio>=0.20.0",
         ],
+        "tray": [
+            "PyQt5>=5.15.0",
+        ],
     },
     entry_points={
         "console_scripts": [
             "skywire=skywire.__main__:run",
+            "skywire-node=client.skywire_node:main",
+        ],
+        "gui_scripts": [
+            "skywire-tray=skywire.tray.app:main",
         ],
     },
+    data_files=[
+        ("share/applications", ["debian/skywire.desktop"]),
+    ],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",
