@@ -169,7 +169,7 @@ Model Context Protocol server for AI integration:
 
 ```bash
 # Install MCP dependency
-pip install mcp
+pip install mcp aiohttp
 
 # Run MCP server
 skywire-mcp --skywire-url http://localhost:8080
@@ -206,12 +206,29 @@ Add to `~/.config/claude/claude_desktop_config.json`:
 }
 ```
 
+**Claude Code Configuration:**
+
+Add to `~/.claude/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "skywire": {
+      "command": "skywire-mcp",
+      "args": ["--skywire-url", "http://skywire-host:8080"]
+    }
+  }
+}
+```
+
 **Example AI Interactions:**
 
 - "What speakers are connected?" → `skywire_list_nodes`
 - "Play an announcement in the kitchen" → `skywire_play_tts`
 - "Mute the bedroom" → `skywire_set_mute`
 - "Route music to all rooms" → `skywire_set_routing`
+
+For detailed tool documentation, parameters, and troubleshooting, see [docs/MCP.md](docs/MCP.md).
 
 ## Configuration
 
