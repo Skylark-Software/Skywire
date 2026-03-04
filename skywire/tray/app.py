@@ -328,7 +328,7 @@ class SkywireTray(QSystemTrayIcon):
 
         # Draw speaker icon background
         if self.state.connected:
-            color = QColor("#4ade80")  # Green
+            color = QColor("#38bdf8")  # Sky blue
         elif self.state.error:
             color = QColor("#ef4444")  # Red
         else:
