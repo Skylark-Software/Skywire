@@ -115,9 +115,8 @@ class SkywireServer:
         app.router.add_post('/api/play', self._api_play_audio)
         app.router.add_get('/health', self._api_health)
 
-        # Web dashboard
+        # Web dashboard (CSS/JS is inline, no static files needed)
         app.router.add_get('/', self._handle_dashboard)
-        app.router.add_static('/static', 'skywire/web/static', name='static')
 
     # ─────────────────────────────────────────────────────────────
     # WebSocket Handlers
