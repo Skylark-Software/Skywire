@@ -177,4 +177,6 @@ skywire --debug
 
 ## License
 
-MIT
+Copyright (c) 2026 Skylark Software LLC. All rights reserved.
+
+This is proprietary software. See [LICENSE](LICENSE) for details.

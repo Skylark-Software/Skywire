@@ -2,6 +2,8 @@
 Skywire Audio Router
 
 Handles routing of audio from sources to destination nodes.
+
+Copyright (c) 2026 Skylark Software LLC. All rights reserved.
 """
 
 import asyncio

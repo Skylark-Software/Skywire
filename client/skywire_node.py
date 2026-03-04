@@ -11,6 +11,8 @@ Features:
 - PipeWire/PulseAudio playback
 - Volume control
 - Statistics and health reporting
+
+Copyright (c) 2026 Skylark Software LLC. All rights reserved.
 """
 
 import argparse

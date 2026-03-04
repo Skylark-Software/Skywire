@@ -2,6 +2,8 @@
 Skywire Server - Main server class
 
 Runs WebSocket server for nodes and sources, plus web dashboard.
+
+Copyright (c) 2026 Skylark Software LLC. All rights reserved.
 """
 
 import asyncio

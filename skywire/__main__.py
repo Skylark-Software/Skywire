@@ -3,6 +3,8 @@
 Skywire - Distributed Audio Routing System
 
 Entry point for running the Skywire server.
+
+Copyright (c) 2026 Skylark Software LLC. All rights reserved.
 """
 
 import argparse
