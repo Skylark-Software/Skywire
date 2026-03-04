@@ -24,8 +24,8 @@ DASHBOARD_HTML = """
             --bg-primary: #1a1a2e;
             --bg-secondary: #16213e;
             --bg-card: #0f3460;
-            --accent: #e94560;
-            --accent-hover: #ff6b6b;
+            --accent: #3b82f6;
+            --accent-hover: #60a5fa;
             --text-primary: #eee;
             --text-secondary: #aaa;
             --success: #4ade80;
