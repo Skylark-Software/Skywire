@@ -24,11 +24,15 @@ setup(
         "tray": [
             "PyQt5>=5.15.0",
         ],
+        "mcp": [
+            "mcp>=1.0.0",
+        ],
     },
     entry_points={
         "console_scripts": [
             "skywire=skywire.__main__:run",
             "skywire-node=client.skywire_node:main",
+            "skywire-mcp=skywire.mcp.server:main",
         ],
         "gui_scripts": [
             "skywire-tray=skywire.tray.app:main",

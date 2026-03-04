@@ -53,6 +53,13 @@ main()
 EOF
 chmod +x "$BUILD_DIR/usr/bin/skywire-node"
 
+cat > "$BUILD_DIR/usr/bin/skywire-mcp" << 'EOF'
+#!/usr/bin/env python3
+from skywire.mcp.server import main
+main()
+EOF
+chmod +x "$BUILD_DIR/usr/bin/skywire-mcp"
+
 # Copy desktop file
 cp debian/skywire.desktop "$BUILD_DIR/usr/share/applications/"
 
@@ -82,6 +89,7 @@ Priority: optional
 Architecture: $ARCH
 Depends: python3 (>= 3.9), python3-pyqt5, python3-websockets, python3-aiohttp, python3-yaml, python3-numpy, python3-jinja2, pipewire | pulseaudio
 Maintainer: Jay Brame <jay@skylarksoftware.com>
+Suggests: python3-mcp
 Description: Distributed audio routing system
  Skywire is a software AV receiver for multi-room audio distribution.
  It routes audio from sources (TTS, media players) to speaker endpoints
@@ -91,6 +99,7 @@ Description: Distributed audio routing system
   - skywire: Audio routing server with web dashboard
   - skywire-tray: Desktop system tray application
   - skywire-node: Headless audio playback client
+  - skywire-mcp: MCP server for AI model integration
 EOF
 
 # Create postinst script
@@ -110,9 +119,13 @@ echo "Commands:"
 echo "  skywire          - Start the audio routing server"
 echo "  skywire-tray     - Start the system tray app"
 echo "  skywire-node     - Start headless audio node"
+echo "  skywire-mcp      - MCP server for AI integration"
 echo ""
 echo "To start on login, run:"
 echo "  systemctl --user enable skywire-node"
+echo ""
+echo "For AI integration (requires: pip install mcp):"
+echo "  skywire-mcp --skywire-url http://localhost:8080"
 echo ""
 
 exit 0

@@ -12,6 +12,7 @@ Copyright (c) 2026 Skylark Software LLC. All rights reserved.
 - **System tray app** - Desktop integration with volume/mute controls
 - **Headless nodes** - Always-on audio endpoints with auto-reconnect
 - **Plugin system** - Extensible TTS/STT bridges and audio processors
+- **MCP server** - AI model integration via Model Context Protocol
 - **Debian packaging** - Easy installation via `apt install skywire`
 
 ## Architecture
@@ -40,10 +41,11 @@ Sources                          Skywire Server                   Destinations
 sudo dpkg -i skywire_0.1.0_all.deb
 sudo apt-get install -f  # Install dependencies
 
-# This provides three commands:
+# This provides four commands:
 #   skywire       - Audio routing server
 #   skywire-tray  - System tray application
 #   skywire-node  - Headless audio node client
+#   skywire-mcp   - MCP server for AI integration
 ```
 
 ### From Source
@@ -155,6 +157,61 @@ Options:
   --node-id TEXT    Node identifier (default: hostname)
   --sample-rate INT Audio sample rate (default: 48000)
 ```
+
+### MCP Server (`skywire-mcp`)
+
+Model Context Protocol server for AI integration:
+
+- Expose audio routing controls to AI models
+- List/control nodes, sources, and routing
+- Play TTS to specific rooms
+- Compatible with Claude Desktop, Claude Code, and other MCP clients
+
+```bash
+# Install MCP dependency
+pip install mcp
+
+# Run MCP server
+skywire-mcp --skywire-url http://localhost:8080
+```
+
+**Available Tools:**
+
+| Tool | Description |
+|------|-------------|
+| `skywire_list_nodes` | List connected audio nodes |
+| `skywire_list_sources` | List audio sources |
+| `skywire_get_routing` | Get current routing matrix |
+| `skywire_set_routing` | Route source to nodes |
+| `skywire_set_volume` | Set node volume (0-100) |
+| `skywire_set_mute` | Mute/unmute a node |
+| `skywire_play_tts` | Send TTS to nodes |
+| `skywire_get_status` | System health check |
+| `skywire_list_plugins` | List registered plugins |
+| `skywire_enable_plugin` | Enable a plugin |
+| `skywire_disable_plugin` | Disable a plugin |
+
+**Claude Desktop Configuration:**
+
+Add to `~/.config/claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "skywire": {
+      "command": "skywire-mcp",
+      "args": ["--skywire-url", "http://skywire-host:8080"]
+    }
+  }
+}
+```
+
+**Example AI Interactions:**
+
+- "What speakers are connected?" → `skywire_list_nodes`
+- "Play an announcement in the kitchen" → `skywire_play_tts`
+- "Mute the bedroom" → `skywire_set_mute`
+- "Route music to all rooms" → `skywire_set_routing`
 
 ## Configuration
 
