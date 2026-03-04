@@ -15,6 +15,9 @@ from aiohttp import web, WSMsgType
 import weakref
 
 from .router import AudioRouter
+from .plugins.manager import PluginManager
+from .plugins.tts_bridge import TTSBridgePlugin
+from .plugins.stt_bridge import STTBridgePlugin
 
 logger = logging.getLogger(__name__)
 
@@ -40,6 +43,10 @@ class SkywireServer:
 
         # Audio router
         self.router = AudioRouter(self)
+
+        # Plugin manager
+        self.plugins = PluginManager(self)
+        self._register_builtin_plugins()
 
         # Web app
         self._app: Optional[web.Application] = None
@@ -78,15 +85,22 @@ class SkywireServer:
         self._site = web.TCPSite(self._runner, self.host, self.websocket_port)
         await self._site.start()
 
+        # Start plugins
+        await self.plugins.start_all()
+
         logger.info(f"Skywire server running on http://{self.host}:{self.websocket_port}")
         logger.info(f"  WebSocket: ws://{self.host}:{self.websocket_port}/audio")
         logger.info(f"  Dashboard: http://{self.host}:{self.websocket_port}/")
         logger.info(f"  API: http://{self.host}:{self.websocket_port}/api/")
+        logger.info(f"  Plugins: {len(self.plugins.plugins)} registered")
 
     async def stop(self):
         """Stop the server."""
         logger.info("Stopping Skywire server...")
         self._running = False
+
+        # Stop plugins
+        await self.plugins.stop_all()
 
         # Close all connections
         for node in list(self._nodes.values()):
@@ -100,6 +114,16 @@ class SkywireServer:
 
         logger.info("Skywire server stopped")
 
+    def _register_builtin_plugins(self):
+        """Register built-in plugins."""
+        # TTS Bridge - receives TTS audio from external systems
+        tts_bridge = TTSBridgePlugin()
+        self.plugins.register(tts_bridge)
+
+        # STT Bridge - forwards mic audio to STT services
+        stt_bridge = STTBridgePlugin()
+        self.plugins.register(stt_bridge)
+
     def _setup_routes(self):
         """Setup HTTP and WebSocket routes."""
         app = self._app
@@ -107,6 +131,10 @@ class SkywireServer:
         # WebSocket endpoints
         app.router.add_get('/audio', self._handle_node_ws)
         app.router.add_get('/source', self._handle_source_ws)
+
+        # Plugin WebSocket endpoints
+        app.router.add_get('/plugin/tts', self._handle_tts_bridge_ws)
+        app.router.add_get('/plugin/stt', self._handle_stt_bridge_ws)
 
         # API endpoints
         app.router.add_get('/api/nodes', self._api_get_nodes)
@@ -116,6 +144,12 @@ class SkywireServer:
         app.router.add_post('/api/node/{node_id}/volume', self._api_set_volume)
         app.router.add_post('/api/play', self._api_play_audio)
         app.router.add_get('/health', self._api_health)
+
+        # Plugin API endpoints
+        app.router.add_get('/api/plugins', self._api_get_plugins)
+        app.router.add_post('/api/plugin/{plugin_id}/enable', self._api_enable_plugin)
+        app.router.add_post('/api/plugin/{plugin_id}/disable', self._api_disable_plugin)
+        app.router.add_get('/api/plugin/{plugin_id}/status', self._api_plugin_status)
 
         # Web dashboard (CSS/JS is inline, no static files needed)
         app.router.add_get('/', self._handle_dashboard)
@@ -308,6 +342,52 @@ class SkywireServer:
         from .web.app import render_dashboard
         html = render_dashboard(self)
         return web.Response(text=html, content_type='text/html')
+
+    # ─────────────────────────────────────────────────────────────
+    # Plugin Handlers
+    # ─────────────────────────────────────────────────────────────
+
+    async def _handle_tts_bridge_ws(self, request: web.Request) -> web.WebSocketResponse:
+        """Handle WebSocket connection for TTS bridge plugin."""
+        tts_plugin = self.plugins.get("tts_bridge")
+        if tts_plugin:
+            return await tts_plugin.handle_websocket(request)
+        return web.Response(status=503, text="TTS Bridge not available")
+
+    async def _handle_stt_bridge_ws(self, request: web.Request) -> web.WebSocketResponse:
+        """Handle WebSocket connection for STT bridge plugin."""
+        stt_plugin = self.plugins.get("stt_bridge")
+        if stt_plugin:
+            return await stt_plugin.handle_websocket(request)
+        return web.Response(status=503, text="STT Bridge not available")
+
+    async def _api_get_plugins(self, request: web.Request) -> web.Response:
+        """Get list of all plugins."""
+        return web.json_response({
+            "plugins": self.plugins.get_status()
+        })
+
+    async def _api_enable_plugin(self, request: web.Request) -> web.Response:
+        """Enable a plugin."""
+        plugin_id = request.match_info['plugin_id']
+        if self.plugins.enable(plugin_id):
+            return web.json_response({"status": "ok", "plugin_id": plugin_id, "enabled": True})
+        return web.json_response({"error": "Plugin not found"}, status=404)
+
+    async def _api_disable_plugin(self, request: web.Request) -> web.Response:
+        """Disable a plugin."""
+        plugin_id = request.match_info['plugin_id']
+        if self.plugins.disable(plugin_id):
+            return web.json_response({"status": "ok", "plugin_id": plugin_id, "enabled": False})
+        return web.json_response({"error": "Plugin not found"}, status=404)
+
+    async def _api_plugin_status(self, request: web.Request) -> web.Response:
+        """Get plugin status."""
+        plugin_id = request.match_info['plugin_id']
+        plugin = self.plugins.get(plugin_id)
+        if plugin:
+            return web.json_response(plugin.get_status())
+        return web.json_response({"error": "Plugin not found"}, status=404)
 
     # ─────────────────────────────────────────────────────────────
     # Audio Routing

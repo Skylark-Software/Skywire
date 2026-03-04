@@ -2,6 +2,8 @@
 Skywire Web Dashboard
 
 Simple embedded web UI for controlling the audio router.
+
+Copyright (c) 2026 Skylark Software LLC. All rights reserved.
 """
 
 from typing import TYPE_CHECKING
@@ -313,10 +315,17 @@ DASHBOARD_HTML = """
                         <div class="stat-label">Sources</div>
                     </div>
                     <div>
-                        <div class="stat-value" id="stat-audio">0</div>
-                        <div class="stat-label">Audio Events</div>
+                        <div class="stat-value" id="stat-plugins">0</div>
+                        <div class="stat-label">Plugins</div>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Plugins</h2>
+            <div class="node-list" id="plugin-list">
+                <div class="empty-state">Loading plugins...</div>
             </div>
         </div>
 
@@ -441,6 +450,52 @@ DASHBOARD_HTML = """
             document.getElementById('server-status-text').textContent = 'Connected';
         }
 
+        async function fetchPlugins() {
+            try {
+                const res = await fetch(`${API_BASE}/api/plugins`);
+                const data = await res.json();
+                updatePluginList(data.plugins);
+            } catch (e) {
+                console.error('Failed to fetch plugins:', e);
+            }
+        }
+
+        function updatePluginList(plugins) {
+            const container = document.getElementById('plugin-list');
+            document.getElementById('stat-plugins').textContent = plugins.length;
+
+            if (plugins.length === 0) {
+                container.innerHTML = '<div class="empty-state">No plugins registered</div>';
+                return;
+            }
+
+            container.innerHTML = plugins.map(plugin => `
+                <div class="node-item">
+                    <div class="node-info">
+                        <div class="status-dot ${plugin.running ? '' : 'offline'}"></div>
+                        <div>
+                            <div class="node-name">${plugin.name}</div>
+                            <div class="node-meta">${plugin.type} • ${plugin.id}</div>
+                        </div>
+                    </div>
+                    <div class="node-controls">
+                        <button class="btn ${plugin.enabled ? 'secondary' : ''}"
+                                onclick="togglePlugin('${plugin.id}', ${!plugin.enabled})">
+                            ${plugin.enabled ? 'Disable' : 'Enable'}
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function togglePlugin(pluginId, enable) {
+            const action = enable ? 'enable' : 'disable';
+            await fetch(`${API_BASE}/api/plugin/${pluginId}/${action}`, {
+                method: 'POST'
+            });
+            fetchPlugins();
+        }
+
         function updateRoutingMatrix(data) {
             const container = document.getElementById('routing-matrix');
             const routing = data.routing || {};
@@ -515,6 +570,7 @@ DASHBOARD_HTML = """
         fetchHealth();
         fetchNodes();
         fetchSources();
+        fetchPlugins();
         fetchRouting();
 
         // Refresh every 5 seconds
@@ -522,6 +578,7 @@ DASHBOARD_HTML = """
             fetchHealth();
             fetchNodes();
             fetchSources();
+            fetchPlugins();
         }, 5000);
     </script>
 </body>
