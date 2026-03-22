@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  skywire:
+    build: .
+    container_name: skywire-server
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - SKYWIRE_HOST=0.0.0.0
+      - SKYWIRE_PORT=3030
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
