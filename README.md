@@ -306,5 +306,5 @@ This software is the proprietary property of Skylark Software LLC. Unauthorized 
 ---
 
 <p align="center">
-  <img src="docs/screenshots/skylark-software-logo.svg" alt="Skylark Software" width="200">
+  <img src="docs/screenshots/skylark-software-logo.svg" alt="Skylark Software" width="400">
 </p>
