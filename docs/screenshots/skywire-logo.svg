@@ -1,0 +1,10 @@
+<svg width="100%" viewBox="60 50 580 130" xmlns="http://www.w3.org/2000/svg" overflow="visible" style="overflow:visible">
+
+  <!-- Sky blue arc — no mask, no clip -->
+  <path d="M100,128 C220,66 440,58 620,102" fill="none" stroke="#4fc3f7" stroke-width="1.6" stroke-linecap="round"/>
+  <circle cx="100" cy="128" r="2.8" fill="#4fc3f7"/>
+
+  <!-- Wordmark -->
+  <text x="148" y="158" font-family="'Raleway', 'Helvetica Neue', sans-serif" font-weight="300" font-size="62" fill="#ffffff" letter-spacing="2">Skywire</text>
+
+</svg>

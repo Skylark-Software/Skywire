@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/screenshots/skywire-logo.svg" alt="Skywire" width="300">
+</p>
+
 # Skywire
 
 Distributed multi-room audio routing. A software AV receiver that connects speaker nodes across a network, routes audio sources to any combination of rooms, and captures microphone audio for speech recognition.
@@ -298,3 +302,9 @@ STT engines connect to `/stt` and receive raw PCM from whichever nodes are selec
 Copyright (c) 2026 Skylark Software LLC. All rights reserved.
 
 This software is the proprietary property of Skylark Software LLC. Unauthorized copying, distribution, or modification is strictly prohibited. See [LICENSE](LICENSE).
+
+---
+
+<p align="center">
+  <img src="docs/screenshots/skylark-software-logo.svg" alt="Skylark Software" width="200">
+</p>
